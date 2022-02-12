@@ -1,0 +1,89 @@
+import discord
+import random
+# {message.author.mention} --> ΚΑΝΕΙ ΜΕΝΤΙΟΝ
+# , reference=message --> KANEI REPLY ΣΤΑ MESSAGES
+# , reference=message, mention_author=False --> KANEI REPLY ΣΤΑ MESSAGES ΑΛΛΑ ΧΩΡΙΣ MENTION
+TOKEN = "OTQwNjYyOTkzNjQ4MjIyMjQ4.YgKqrg.RB1BIqoGcFR3ZOWfwfg-UXHmxhg"
+
+intents = discord.Intents.default()
+intents.members = True
+client = discord.Client(intents=intents)
+
+response1 = random.randrange(10)
+response2 = random.randrange(100)
+response3 = random.randrange(1000)
+
+@client.event
+async def on_member_join(member):
+    guild = client.get_guild(782924910565654539)
+    channel = guild.get_channel(823902043437662218)
+    await channel.send(f'Welcome to our test server {member.mention} ! 🥳')
+
+@client.event
+async def on_member_remove(member):
+    guild = client.get_guild(782924910565654539)
+    channel = guild.get_channel(823914490503495691)
+    await channel.send(f'{member.mention} left our server.So sad :cry:')
+
+@client.event
+async def on_message(message):
+    username = str(message.author).split('#')[0]
+    user_message = str(message.content)
+    channel = str(message.channel.name)
+    print(f'{username}: {user_message} ({channel})')
+
+    if message.author == client.user:
+        return
+
+    if message.channel.name == ('💬︱general'):
+        if user_message.lower() == 'hello':
+            await message.channel.send(f'Hello', reference=message)
+            return
+        elif user_message.lower() == 'hey':
+            await message.channel.send(f'hey', reference=message)
+            return
+        elif user_message.lower() == 'bye':
+            await message.channel.send(f'See you later {message.author.mention}', reference=message)
+            return
+        elif user_message.lower() == 'ping':
+            await message.channel.send(f'pong', reference=message, mention_author=False)
+            return
+        elif user_message.lower() == 'random':
+            await message.channel.send(f'What do you want to be the random rage? (10,100,1000)', reference=message)
+        elif user_message.lower() == '10':
+            await message.channel.send(f'{response1}')
+            return
+        elif user_message.lower() == '100':
+            await message.channel.send(f'{response2}')
+            return
+        elif user_message.lower() == '1000':
+            await message.channel.send(f'{response3}')
+            return
+        channel = client.get_channel(823899455106318346)
+
+@client.event
+async def on_message(message):
+    if message.content == 'random':
+        channel = client.get_channel(823992240077668413)
+        myEmbed = discord.Embed(title="Hey,", description="Pick your random rage:", color=0x00ff00)
+        myEmbed.add_field(name="Your options:", value="10, 100, 1000", inline=False)
+        myEmbed.set_footer(text='random rage')
+
+        await channel.send(embed=myEmbed)
+        return
+    elif message.content == '10':
+        await message.channel.send(f'Your random number: {response1}')
+        return
+    elif message.content == '100':
+        await message.channel.send(f'Your random number: {response2}')
+        return
+    elif message.content == '1000':
+        await message.channel.send(f'Your random number: {response3}')
+        return
+
+@client.event
+async def on_ready():
+    await client.change_presence(status=discord.Status.do_not_disturb, activity=discord.Game('Coding and running by karanikolas#9777'))
+    print('Bot is running perfectly')
+
+client.run(TOKEN)
